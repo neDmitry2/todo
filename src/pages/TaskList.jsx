@@ -1,11 +1,11 @@
 import TaskItem from '../components/TaskItem';
 import FAB from '../components/ui/FAB';
+import { useTasks } from '../hooks/useTasks';
 
 const TaskList = () => {
-  const tasks = [
-    { id: 1, title: 'Купить продукты', is_completed: false },
-    { id: 2, title: 'Встреча с командой', is_completed: true, start_time: '14:00', end_time: '15:00' },
-  ];
+  const { tasks, isLoading, updateTask } = useTasks();
+
+  if (isLoading) return <div>Загрузка...</div>;
 
   return (
     <div className="p-4 pb-32">
