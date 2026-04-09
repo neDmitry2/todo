@@ -1,7 +1,8 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { CalendarDays, ListTodo } from 'lucide-react';
 import TaskItem from '../components/TaskItem';
+import TaskEditSheet from '../components/TaskEditSheet';
 import { useTasks } from '../hooks/useTasks';
 import { mapTasksToCalendarEvents } from '../utils/calendarAdapter';
 
@@ -22,7 +23,16 @@ const DASHBOARD_TASKS_LIMIT = 5;
 const Dashboard = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { tasks, isLoading, isError, updateTask } = useTasks();
+  const {
+    tasks,
+    isLoading,
+    isError,
+    updateTask,
+    deleteTask,
+    isUpdating,
+    isDeleting,
+  } = useTasks();
+  const [editingTask, setEditingTask] = useState(null);
   const todayKey = formatDateKey(new Date());
 
   const todaySchedule = useMemo(() => {
@@ -56,7 +66,6 @@ const Dashboard = () => {
   return (
     <div className="p-4 pb-32">
       <h1 className="text-2xl font-bold mb-2 text-black">Ваш день</h1>
-      <p className="text-sm text-black mb-5">Сегодня: {todayKey}</p>
 
       <section className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm mb-5">
         <div className="flex items-center justify-between mb-3">
@@ -114,6 +123,7 @@ const Dashboard = () => {
                 key={task.id}
                 task={task}
                 onToggle={handleToggleTask}
+                onEdit={() => setEditingTask(task)}
                 onSchedule={() =>
                   navigate(`/tasks/${task.id}/schedule`, {
                     state: { from: location.pathname },
@@ -129,6 +139,17 @@ const Dashboard = () => {
           </div>
         )}
       </section>
+
+      <TaskEditSheet
+        task={editingTask}
+        open={Boolean(editingTask)}
+        onClose={() => setEditingTask(null)}
+        updateTask={updateTask}
+        deleteTask={deleteTask}
+        isUpdating={isUpdating}
+        isDeleting={isDeleting}
+        scheduleReturnPath="/"
+      />
     </div>
   );
 };

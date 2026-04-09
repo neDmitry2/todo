@@ -7,7 +7,6 @@ import Statistics from './pages/Statistics';
 import NewTask from './pages/NewTask';
 import TaskSchedule from './pages/TaskSchedule';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -35,7 +34,6 @@ function App() {
           <Navbar />
         </div>
       </Router>
-      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
 }

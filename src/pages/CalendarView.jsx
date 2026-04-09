@@ -3,8 +3,38 @@ import { Calendar, dateFnsLocalizer, Views } from 'react-big-calendar';
 import { format, parse, startOfWeek, getDay } from 'date-fns';
 import { ru } from 'date-fns/locale';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
+import './CalendarView.css';
 import { useTasks } from '../hooks/useTasks';
 import { mapTasksToCalendarEvents } from '../utils/calendarAdapter';
+import TaskEditSheet from '../components/TaskEditSheet';
+
+const formatEventTimeRange = (start, end) =>
+  `${format(start, 'HH:mm', { locale: ru })} – ${format(end, 'HH:mm', { locale: ru })}`;
+
+const calendarEventPropGetter = (event) => {
+  if (!event.resource?.is_completed) return {};
+  return {
+    style: {
+      opacity: 0.48,
+      backgroundColor: 'rgba(49, 116, 173, 0.38)',
+      borderColor: 'rgba(38, 89, 133, 0.45)',
+    },
+  };
+};
+
+const CalendarEventContent = ({ event }) => {
+  const done = event.resource?.is_completed;
+  return (
+    <div className="rbc-custom-event flex flex-col gap-0.5 leading-tight">
+      <span className={`truncate font-medium ${done ? 'line-through' : ''}`}>{event.title}</span>
+      <span
+        className={`truncate text-[11px] leading-tight ${done ? 'opacity-75' : 'opacity-90'}`}
+      >
+        {formatEventTimeRange(event.start, event.end)}
+      </span>
+    </div>
+  );
+};
 
 const locales = {
   ru,
@@ -18,50 +48,53 @@ const localizer = dateFnsLocalizer({
   locales,
 });
 
-const viewLabels = {
-  [Views.DAY]: 'День',
-  [Views.WEEK]: 'Неделя',
-  [Views.MONTH]: 'Месяц',
-};
-
 const availableViews = [Views.DAY, Views.WEEK, Views.MONTH];
 
+/** Высота экрана минус нижняя панель (pb-20 в App). Без скролла страницы. */
+const calendarPageLayoutClass =
+  'flex h-[calc(100svh-5rem)] flex-col overflow-hidden px-4 pt-4';
+
 const CalendarView = () => {
-  const { tasks, isLoading, isError } = useTasks();
+  const {
+    tasks,
+    isLoading,
+    isError,
+    updateTask,
+    deleteTask,
+    isUpdating,
+    isDeleting,
+  } = useTasks();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [currentView, setCurrentView] = useState(Views.WEEK);
+  const [editingTask, setEditingTask] = useState(null);
 
   const events = useMemo(() => mapTasksToCalendarEvents(tasks), [tasks]);
 
-  if (isLoading) return <div className="p-4">Загрузка календаря...</div>;
-  if (isError) return <div className="p-4">Не удалось загрузить задачи для календаря</div>;
+  if (isLoading) {
+    return (
+      <div className={calendarPageLayoutClass}>
+        <div className="flex flex-1 items-center justify-center text-black/60">
+          Загрузка календаря…
+        </div>
+      </div>
+    );
+  }
+  if (isError) {
+    return (
+      <div className={calendarPageLayoutClass}>
+        <div className="flex flex-1 items-center justify-center text-red-600">
+          Не удалось загрузить задачи для календаря
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="p-4 pb-32">
-      <h1 className="text-2xl font-bold mb-2">Календарь</h1>
-      <p className="text-sm text-black mb-4">
-        План задач с переключением по видам: день, неделя, месяц.
-      </p>
+    <div className={calendarPageLayoutClass}>
+      <h1 className="mb-2 shrink-0 text-2xl font-bold">Календарь</h1>
 
-      <div className="mb-4 flex flex-wrap gap-2">
-        {availableViews.map((view) => (
-          <button
-            key={view}
-            type="button"
-            onClick={() => setCurrentView(view)}
-            className={`rounded-md border px-3 py-2 text-sm ${
-              currentView === view
-                ? 'border-blue-600 bg-blue-600 text-white'
-                : 'border-gray-300 bg-white text-black'
-            }`}
-          >
-            {viewLabels[view]}
-          </button>
-        ))}
-      </div>
-
-      <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white p-2 shadow-sm">
-        <div className="h-[70vh] min-h-[460px]">
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white p-2 shadow-sm">
+        <div className="calendar-view-rbc min-h-0 flex-1">
           <Calendar
             localizer={localizer}
             events={events}
@@ -74,6 +107,9 @@ const CalendarView = () => {
             views={availableViews}
             popup
             culture="ru"
+            eventPropGetter={calendarEventPropGetter}
+            onSelectEvent={(event) => setEditingTask(event.resource)}
+            components={{ event: CalendarEventContent }}
             messages={{
               allDay: 'Весь день',
               previous: 'Назад',
@@ -92,6 +128,16 @@ const CalendarView = () => {
           />
         </div>
       </div>
+
+      <TaskEditSheet
+        task={editingTask}
+        open={Boolean(editingTask)}
+        onClose={() => setEditingTask(null)}
+        updateTask={updateTask}
+        deleteTask={deleteTask}
+        isUpdating={isUpdating}
+        isDeleting={isDeleting}
+      />
     </div>
   );
 };

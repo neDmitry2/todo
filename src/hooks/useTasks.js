@@ -75,6 +75,7 @@ export const useTasks = () => {
     updateTask: updateMutation.mutate,
     isUpdating: updateMutation.isPending,
     deleteTask: deleteMutation.mutate,
+    isDeleting: deleteMutation.isPending,
     upsertTaskSchedule: scheduleMutation.mutate,
     isScheduling: scheduleMutation.isPending,
   };

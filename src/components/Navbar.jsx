@@ -9,7 +9,7 @@ const tabs = [
 
 export default function Navbar() {
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around p-2 md:hidden">
+    <nav className="fixed bottom-0 left-0 right-0 z-40 flex justify-around border-t bg-white p-2 shadow-[0_-1px_6px_rgba(0,0,0,0.06)]">
       {tabs.map((tab) => (
         <NavLink
           key={tab.to}
