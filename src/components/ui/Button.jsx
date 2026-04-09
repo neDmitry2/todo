@@ -2,7 +2,7 @@ const Button = ({ children, onClick, variant = 'primary', className = '', ...pro
   const variants = {
     primary: 'bg-blue-600 text-white active:bg-blue-700',
     outline: 'border-2 border-blue-600 text-blue-600 active:bg-blue-50',
-    ghost: 'text-gray-600 active:bg-gray-100',
+    ghost: 'text-black/80 active:bg-black/5',
   };
 
   return (

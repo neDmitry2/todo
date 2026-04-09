@@ -9,12 +9,12 @@ const TaskItem = ({ task, onToggle, onSchedule }) => {
     >
       <div className="flex-1 min-w-0 text-left">
         <h3
-          className={`font-semibold text-lg ${task.is_completed ? 'line-through text-gray-400' : 'text-gray-800'}`}
+          className={`font-semibold text-lg ${task.is_completed ? 'line-through text-black/50' : 'text-black'}`}
         >
           {task.title}
         </h3>
         {task.start_time && (
-          <div className="flex items-center text-gray-500 text-sm mt-1">
+          <div className="flex items-center text-black text-sm mt-1">
             <Clock size={14} className="mr-1 shrink-0" />
             <span>
               {task.start_time} - {task.end_time}
@@ -30,7 +30,7 @@ const TaskItem = ({ task, onToggle, onSchedule }) => {
             e.stopPropagation();
             onSchedule?.();
           }}
-          className="rounded-xl border border-gray-200 bg-white p-2 text-gray-600 transition-colors hover:bg-gray-50 active:scale-95"
+          className="rounded-xl border border-gray-200 bg-white p-2 text-black transition-colors hover:bg-gray-50 active:scale-95"
           aria-label="Привязать ко времени"
           title="Привязать ко времени"
         >
@@ -48,7 +48,7 @@ const TaskItem = ({ task, onToggle, onSchedule }) => {
           {task.is_completed ? (
             <CheckCircle2 className="text-green-500" size={26} />
           ) : (
-            <Circle className="text-gray-300" size={26} />
+            <Circle className="text-black/35" size={26} />
           )}
         </button>
       </div>

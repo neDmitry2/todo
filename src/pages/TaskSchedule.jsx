@@ -307,7 +307,7 @@ const TaskSchedule = () => {
   return (
     <div className="p-4 pb-32">
       <h1 className="text-2xl font-bold mb-2">Планирование задач</h1>
-      <p className="text-gray-600 mb-6">{task.title}</p>
+      <p className="text-black mb-6">{task.title}</p>
 
       <div className="space-y-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
         <div>
@@ -371,7 +371,7 @@ const TaskSchedule = () => {
           <p className="block text-sm font-medium mb-2">Начало</p>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label htmlFor="start-hour" className="mb-1 block text-xs text-gray-500">
+              <label htmlFor="start-hour" className="mb-1 block text-xs text-black">
                 Часы
               </label>
               <select
@@ -389,7 +389,7 @@ const TaskSchedule = () => {
               </select>
             </div>
             <div>
-              <label htmlFor="start-minute" className="mb-1 block text-xs text-gray-500">
+              <label htmlFor="start-minute" className="mb-1 block text-xs text-black">
                 Минуты
               </label>
               <select
@@ -413,7 +413,7 @@ const TaskSchedule = () => {
           <p className="block text-sm font-medium mb-2">Конец</p>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label htmlFor="end-hour" className="mb-1 block text-xs text-gray-500">
+              <label htmlFor="end-hour" className="mb-1 block text-xs text-black">
                 Часы
               </label>
               <select
@@ -431,7 +431,7 @@ const TaskSchedule = () => {
               </select>
             </div>
             <div>
-              <label htmlFor="end-minute" className="mb-1 block text-xs text-gray-500">
+              <label htmlFor="end-minute" className="mb-1 block text-xs text-black">
                 Минуты
               </label>
               <select
@@ -472,7 +472,7 @@ const TaskSchedule = () => {
         <h2 className="text-lg font-semibold mb-3">Текущая занятость</h2>
 
         {busySlots.length === 0 ? (
-          <p className="text-sm text-gray-500">На выбранную дату накладок нет.</p>
+          <p className="text-sm text-black">На выбранную дату накладок нет.</p>
         ) : (
           <div className="space-y-2">
             {busySlots.map((slot) => (
@@ -481,7 +481,7 @@ const TaskSchedule = () => {
                 className={`rounded-md border px-3 py-2 text-sm ${
                   overlappingTasks.some((item) => item.id === slot.id)
                     ? 'border-red-300 bg-red-50 text-red-700'
-                    : 'border-gray-200 bg-gray-50 text-gray-700'
+                    : 'border-gray-200 bg-gray-50 text-black'
                 }`}
               >
                 <p className="font-medium">{slot.title}</p>

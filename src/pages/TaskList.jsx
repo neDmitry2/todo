@@ -25,7 +25,7 @@ const TaskList = () => {
       <h1 className="text-2xl font-bold mb-6">Мои задачи</h1>
 
       {tasks.length === 0 ? (
-        <p className="text-gray-500">Пока нет задач. Добавьте первую.</p>
+        <p className="text-black">Пока нет задач. Добавьте первую.</p>
       ) : (
         tasks.map((task) => (
           <TaskItem

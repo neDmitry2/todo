@@ -39,7 +39,7 @@ const CalendarView = () => {
   return (
     <div className="p-4 pb-32">
       <h1 className="text-2xl font-bold mb-2">Календарь</h1>
-      <p className="text-sm text-gray-600 mb-4">
+      <p className="text-sm text-black mb-4">
         План задач с переключением по видам: день, неделя, месяц.
       </p>
 
@@ -52,7 +52,7 @@ const CalendarView = () => {
             className={`rounded-md border px-3 py-2 text-sm ${
               currentView === view
                 ? 'border-blue-600 bg-blue-600 text-white'
-                : 'border-gray-300 bg-white text-gray-700'
+                : 'border-gray-300 bg-white text-black'
             }`}
           >
             {viewLabels[view]}

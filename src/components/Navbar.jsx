@@ -18,7 +18,7 @@ export default function Navbar() {
           end={tab.to === '/'}
           className={({ isActive }) =>
             `flex flex-col items-center text-sm py-1 px-2 rounded ${
-              isActive ? 'text-blue-600' : 'text-gray-500'
+              isActive ? 'text-blue-600' : 'text-black/60'
             }`
           }
         >
