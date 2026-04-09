@@ -56,6 +56,7 @@ const Dashboard = () => {
       id,
       updates: {
         is_completed: isCompleted,
+        completed_at: isCompleted ? new Date().toISOString() : null,
       },
     });
   };

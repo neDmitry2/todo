@@ -37,6 +37,10 @@ const TaskEditSheet = ({
       setError('Введите название');
       return;
     }
+
+    const completedAt =
+      isCompleted ? task.completed_at || new Date().toISOString() : null;
+
     updateTask(
       {
         id: task.id,
@@ -44,6 +48,7 @@ const TaskEditSheet = ({
           title: trimmed,
           description: description.trim(),
           is_completed: isCompleted,
+          completed_at: completedAt,
         },
       },
       {
