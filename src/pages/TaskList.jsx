@@ -1,25 +1,47 @@
 import TaskItem from '../components/TaskItem';
 import FAB from '../components/ui/FAB';
 import { useTasks } from '../hooks/useTasks';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const TaskList = () => {
-  const { tasks, isLoading, updateTask } = useTasks();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { tasks, isLoading, isError, updateTask } = useTasks();
+
+  const handleToggleTask = (id, isCompleted) => {
+    updateTask({
+      id,
+      updates: {
+        is_completed: isCompleted,
+      },
+    });
+  };
 
   if (isLoading) return <div>Загрузка...</div>;
+  if (isError) return <div>Не удалось загрузить задачи</div>;
 
   return (
     <div className="p-4 pb-32">
       <h1 className="text-2xl font-bold mb-6">Мои задачи</h1>
-      
-      {tasks.map(task => (
-        <TaskItem 
-          key={task.id} 
-          task={task} 
-          onToggle={(id, status) => console.log('Update task', id, status)} 
-        />
-      ))}
 
-      <FAB onClick={() => console.log('Open Add Task Modal')} />
+      {tasks.length === 0 ? (
+        <p className="text-gray-500">Пока нет задач. Добавьте первую.</p>
+      ) : (
+        tasks.map((task) => (
+          <TaskItem
+            key={task.id}
+            task={task}
+            onToggle={handleToggleTask}
+            onSchedule={() =>
+              navigate(`/tasks/${task.id}/schedule`, {
+                state: { from: location.pathname },
+              })
+            }
+          />
+        ))
+      )}
+
+      <FAB onClick={() => navigate('/tasks/new')} />
     </div>
   );
 };
