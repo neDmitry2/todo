@@ -1,73 +1,79 @@
-# React + TypeScript + Vite
+# Todo — задачи и расписание
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Веб-приложение для ведения списка дел с привязкой к календарю: главная с обзором дня, календарь, список задач, планирование слотов и простая статистика по выполненным задачам за сегодня.
 
-Currently, two official plugins are available:
+## Возможности
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Главная** (`/`) — расписание на сегодня и задачи дня, быстрый переход в календарь, отметка выполнения и редактирование в боковой панели.
+- **Календарь** (`/calendar`) — месячный/недельный вид на базе `react-big-calendar`, события строятся из задач и их расписания.
+- **Задачи** (`/tasks`) — полный список; создание новой задачи (`/tasks/new`) с заголовком и описанием.
+- **Расписание задачи** (`/tasks/:taskId/schedule`) — интервал времени для конкретной задачи; данные хранятся в таблице событий и сливаются с задачами при загрузке.
+- **Статистика** (`/stats`) — задачи, выполненные сегодня, и суммарное время по длительности слотов.
 
-## React Compiler
+Нижняя навигация: Главная, Календарь, Задачи, Статистика.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Стек
 
-## Expanding the ESLint configuration
+- [React](https://react.dev/) 19, [Vite](https://vitejs.dev/) 8
+- [React Router](https://reactrouter.com/) 7
+- [TanStack Query](https://tanstack.com/query) — загрузка и мутации задач
+- [Supabase](https://supabase.com/) — PostgreSQL и клиент `@supabase/supabase-js`
+- [Tailwind CSS](https://tailwindcss.com/) 4, [date-fns](https://date-fns.org/), [react-hook-form](https://react-hook-form.com/), [Lucide](https://lucide.dev/) / эмодзи в навбаре
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Основной код интерфейса — JSX; точки входа сборки и конфигурация — TypeScript.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Требования
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+- Node.js с поддержкой текущих версий зависимостей (рекомендуется LTS).
+- Проект в Supabase с таблицами **`tasks`** и **`events`**, согласованными с кодом сервиса задач.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Минимально ожидаемые поля (по использованию в приложении):
+
+- `tasks`: идентификатор, `user_id`, `title`, `description`, `is_completed`, `completed_at`, `created_at` (и другие столбцы, если вы их добавите).
+- `events`: идентификатор, `user_id`, `task_id`, `title`, `start_time`, `end_time`, `is_all_day`, `updated_at`.
+
+Настройте [политики RLS](https://supabase.com/docs/guides/auth/row-level-security) и права так, чтобы анонимный ключ мог выполнять нужные `select` / `insert` / `update` / `delete` для вашего сценария.
+
+### Пользователь в коде
+
+Сейчас все запросы привязаны к фиксированному `user_id` в `src/services/taskService.js` (заглушка для разработки).
+## Переменные окружения
+
+В корне репозитория создайте файл `.env` (или `.env.local` — в зависимости от вашей практики) с переменными Vite:
+
+```env
+VITE_SUPABASE_URL=https://<ваш-проект>.supabase.co
+VITE_SUPABASE_ANON_KEY=<anon-key>
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Значения берутся в панели Supabase: **Project Settings → API**.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Установка и запуск
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev
 ```
+
+Приложение откроется по адресу, который выведет Vite (обычно `http://localhost:5173`).
+
+Другие скрипты:
+
+- `npm run build` — проверка TypeScript и production-сборка
+- `npm run preview` — локальный просмотр собранного бандла
+- `npm run lint` — ESLint
+
+## Структура (кратко)
+
+| Путь | Назначение |
+|------|------------|
+| `src/App.jsx` | Роуты и `QueryClientProvider` |
+| `src/pages/` | Экраны: дашборд, календарь, список, форма, расписание, статистика |
+| `src/components/` | Навбар, карточка задачи, панель редактирования, UI-компоненты |
+| `src/hooks/useTasks.js` | React Query: список задач и мутации |
+| `src/services/taskService.js` | Обращения к Supabase (`tasks` + `events`) |
+| `src/utils/scheduleMerge.js` | Слияние событий с задачами; локальные дата/время |
+| `src/utils/calendarAdapter.js` | Преобразование задач в события календаря |
+| `src/lib/supabase.ts` | Клиент Supabase |
+
+---
