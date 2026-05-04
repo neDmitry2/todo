@@ -32,7 +32,14 @@ const NewTask = () => {
     setSubmitError('');
 
     createTask(formData, {
-      onSuccess: () => {
+      onSuccess: (result) => {
+        if (result?.twenty?.error) {
+          setSubmitError(
+            `Twenty CRM (${result.twenty.status}): ${result.twenty.error}`,
+          );
+          return;
+        }
+
         navigate('/tasks');
       },
       onError: (error) => {

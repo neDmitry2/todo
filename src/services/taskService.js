@@ -1,5 +1,6 @@
 import { supabase } from '../lib/supabase';
 import { buildLocalDateTime, mergeTasksWithEvents } from '../utils/scheduleMerge';
+import { twentyService } from './twentyService';
 
 const MOCK_USER_ID = '00000000-0000-0000-0000-000000000001';
 
@@ -36,7 +37,14 @@ export const taskService = {
     const { data, error } = await supabase.from('tasks').insert([payload]).select();
 
     if (error) throw new Error(error.message);
-    return data[0];
+
+    const task = data[0];
+    const twenty = await twentyService.createTask(task);
+
+    return {
+      task,
+      twenty,
+    };
   },
 
   async updateTask({ id, updates }) {
